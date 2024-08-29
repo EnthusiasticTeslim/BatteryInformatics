@@ -1,0 +1,6 @@
+notebooks/transformer*
+results/*
+saved_models/*
+notebooks/rdkit*
+*__pycache__*
+*.DS_Store*
