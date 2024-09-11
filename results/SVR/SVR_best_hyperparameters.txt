@@ -1,0 +1,6 @@
+Best parameters:
+C: 0.03277771174293156
+epsilon: 1.1866833811315645e-06
+gamma: 1.2264616199115787e-05
+kernel: linear
+Best score: 0.73
