@@ -1,0 +1,9 @@
+Best parameters:
+learning_rate: 0.049834952427705276
+max_depth: 23
+max_features: sqrt
+min_samples_leaf: 6
+min_samples_split: 18
+n_estimators: 98
+random_state: 373
+Best score: 0.72
