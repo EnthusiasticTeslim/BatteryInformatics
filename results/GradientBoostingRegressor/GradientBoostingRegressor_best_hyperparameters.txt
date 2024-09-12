@@ -6,4 +6,4 @@ min_samples_leaf: 6
 min_samples_split: 18
 n_estimators: 98
 random_state: 373
-Best score: 0.72
+Best score: 0.71
