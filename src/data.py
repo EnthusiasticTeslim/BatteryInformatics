@@ -1,7 +1,32 @@
+import argparse, os
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import argparse, os
-from utils import read_and_process_data, save_data
+from rdkit import Chem
+
+def canonical_smiles(smiles):
+    '''Generate canonical SMILES strings'''
+    return Chem.MolToSmiles(Chem.MolFromSmiles(smiles))
+
+def read_and_process_data(file_path, canonicalize=True, columns = ['smiles', 'redox_potential']):
+    """Read and process the original data file."""
+    with open(file_path, 'r') as f:
+        next(f)  # Skip header
+        data = [line.strip().split(",") for line in f]
+    
+    df = pd.DataFrame(data, columns=columns)
+    df[columns[1]] = df[columns[1]].astype(float)
+    
+    if canonicalize:
+        df[columns[0]] = df[columns[0]].apply(canonical_smiles)
+    
+    df.columns = ['smiles', 'label']
+    return df
+
+def save_data(df, path, filename):
+    """Save DataFrame to CSV."""
+    full_path = os.path.join(path, filename)
+    df.to_csv(full_path, index=False)
+    print(f"Saved data to {full_path}")
 
 
 def main(args):
