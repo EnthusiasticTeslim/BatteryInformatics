@@ -1,6 +1,19 @@
-notebooks/transformer*
-results/*
-saved_models/*
-notebooks/rdkit*
+# General
+dump*
+README.md 
+*tfevents*
+docker/*
 *__pycache__*
 *.DS_Store*
+*.idea*
+# notebooks
+notebooks/rdkit*
+notebooks/transformer*
+# results
+results/llm*
+results/GradientBoosting*
+results/RandomForest*
+results/AdaBoost*
+results/SVR*
+results/XGB*
+results/GNN/model*
