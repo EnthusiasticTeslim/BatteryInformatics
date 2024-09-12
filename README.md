@@ -25,6 +25,7 @@ Source code and trained models for the paper "*Comparative Analysis of Structure
     <li><a href="#Status"> ➤ Status</a></li>
     <li><a href="#How-to-cite"> ➤ How to cite</a></li>
     <li><a href="#License"> ➤ License</a></li>
+    <li><a href="#References"> ➤ References</a></li>
   </ol>
 </details>
 
@@ -82,7 +83,7 @@ python -m src/descriptor/trainer.py --parent_directory YOUR_MAIN_FOLDER --result
 
 To train the whole model ([SVR](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html), [RandomForest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html), [AdaBoostRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html), [GradientBoostingRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)), 
 ```bash
-chmod a+x descriptor.sh
+chmod a+x regenerate/descriptor.sh
 ./descriptor.sh
 ```
 
@@ -127,7 +128,7 @@ options:
 
 To train the GNN model, 
 ```bash
-chmod a+x graph.sh
+chmod a+x regenerate/graph.sh
 ./graph.sh
 ```
 and its checkpoints and predictions will be saved in `results/GNN`.
@@ -179,3 +180,8 @@ under construction
 
 BatteryInformatics is under MIT license. For use of specific models, please refer to the model licenses found in the original packages.
 
+<!-- References -->
+<h2 id="References">References</h2>
+
+- Qin et al (2021) [Predicting Critical Micelle Concentrations for Surfactants Using Graph Convolutional Neural Networks](https://pubs.acs.org/doi/full/10.1021/acs.jpcb.1c05264)
+- Miriam et al (2024) [Surfactant-Specific AI-Driven Molecular Design: Integrating Generative Models, Predictive Modeling, and Reinforcement Learning for Tailored Surfactant Synthesis](https://pubs.acs.org/doi/full/10.1021/acs.iecr.4c00401)
