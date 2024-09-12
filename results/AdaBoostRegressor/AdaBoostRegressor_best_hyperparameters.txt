@@ -1,5 +1,0 @@
-Best parameters:
-learning_rate: 0.0054594961121606006
-n_estimators: 24
-random_state: 973
-Best score: 0.59

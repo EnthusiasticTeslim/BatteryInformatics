@@ -1,1 +1,0 @@
-Namespace(parent_directory='/Users/gbemidebe/Documents/GitHub/BatteryInformatics', data_directory='data', result_directory='results', src='src', train_data='train_data_cleaned.csv', test_data='test_data_cleaned.csv', scale=True, hyperparameter='hyperparameters_descriptor.yaml', iterations=1, cv=5, model='SVR', seed=104)

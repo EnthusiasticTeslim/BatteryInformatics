@@ -1,6 +1,0 @@
-Best parameters:
-C: 2.535081696888196
-epsilon: 7.517306985814198e-06
-gamma: 2.690797090979236e-06
-kernel: poly
-Best score: -0.09

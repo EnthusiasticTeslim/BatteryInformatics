@@ -1,5 +1,0 @@
-Model performance on test set: 0.50
-Train set
-RMSE: 0.51, MAE: 0.37, R2: 0.73
-Test set
-RMSE: 0.59, MAE: 0.42, R2: 0.50
