@@ -1,6 +1,6 @@
 # General
 dump*
-README.md 
+# README.md 
 *tfevents*
 docker/*
 *__pycache__*
@@ -17,3 +17,5 @@ results/AdaBoost*
 results/SVR*
 results/XGB*
 results/GNN/model*
+results/~$Method.pptx
+results/Method.pptx
