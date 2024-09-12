@@ -92,7 +92,7 @@ def main(args: argparse.Namespace):
         seed=args.seed,
         do_eval=True,
         do_train=True,
-        load_best_model_at_end=False,
+        load_best_model_at_end=True,
         save_total_limit=2,
         optim='adamw_torch'
     )
