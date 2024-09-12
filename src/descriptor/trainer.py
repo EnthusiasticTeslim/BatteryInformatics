@@ -118,7 +118,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_data', type=str, default='train_data_cleaned.csv', help='Path to train data')
     parser.add_argument('--test_data', type=str, default='test_data_cleaned.csv', help='Path to test data')
     parser.add_argument('--scale', action='store_true', help='Scale data')
-    parser.add_argument('--hyperparameter', type=str, default='hyperparameters_descriptor.yaml', help='Hyperparameter space')
+    parser.add_argument('--hyperparameter', type=str, default='hp_descriptor.yaml', help='Hyperparameter space')
     parser.add_argument('--iterations', type=int, default=10, help='Number of iterations for hyperparameter optimization')
     parser.add_argument('--cv', type=int, default=5, help='Number of cross-validation folds')
     parser.add_argument('--model', type=str, default='RandomForestRegressor', help='Model to train')
