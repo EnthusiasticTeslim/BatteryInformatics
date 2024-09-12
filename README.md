@@ -4,7 +4,7 @@
 # BatteryInformatics
 Source code and trained models for the paper "*Comparative Analysis of Structure-Property Machine Learning models for Predicting Electrolyte Thermodynamic Windows*". 
 
-![General overview of the modeling framework](method.png?raw=true "modeling framework")
+![General overview of the modeling framework](src/method.png "modeling framework")
 *General overview of the modeling framework*
 
 <!-- TABLE OF CONTENTS -->
