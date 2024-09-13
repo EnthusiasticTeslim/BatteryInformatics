@@ -8,6 +8,7 @@ from rdkit.Chem import rdCoordGen, Descriptors
 
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
 from skopt import BayesSearchCV
 from skopt.space import Real, Integer, Categorical
 
@@ -139,36 +140,22 @@ def load_hyperparameter_space(yaml_file):
     
     return space
 
+def evaluate_model(result_dir, results, identifier='noCV'):
 
-def plot_prediction_scatter(
-        y_true_train, y_pred_train, y_true_test, y_pred_test,                     
-        figsize=(4, 3), xlabel=r"$\rm Target$", ylabel=r"$\rm Prediction$", title=None, save_path=None):
-    """
-    Create a scatter plot of predicted vs true values for train and test sets.
-    """
-    fig, ax = plt.subplots(figsize=figsize)
+    for dataset, y_true, y_pred in results:
+        rmse = root_mean_squared_error(y_true, y_pred)
+        mae = mean_absolute_error(y_true, y_pred)
+        r2 = r2_score(y_true, y_pred)
+        tqdm.write(f'{dataset} set')
+        tqdm.write(f"id: {identifier}, RMSE: {rmse:.2f}, MAE: {mae:.2f}, R2: {r2:.2f}")
+
+    # metrics to file
+    with open(f"{result_dir}/performance_metrics_{identifier}.txt", 'w') as f:
+        for dataset, y_true, y_pred in results:
+            rmse = root_mean_squared_error(y_true, y_pred) 
+            mae = mean_absolute_error(y_true, y_pred)
+            r2 = r2_score(y_true, y_pred)
+            f.write(f'{dataset} set\n')
+            f.write(f"id: {identifier}, RMSE: {rmse:.2f}, MAE: {mae:.2f}, R2: {r2:.2f}\n")
     
-    # plot actual vs predicted
-    ax.scatter(y_true_train, y_pred_train, label=r"$\rm Train$", c="red") # Train
-    ax.scatter(y_true_test, y_pred_test, label=r"$\rm Test$", c="blue") # Test
-    # plot best fit line
-    all_values = np.concatenate([y_true_train, y_true_test, y_pred_train, y_pred_test])
-    min_val, max_val = np.min(all_values), np.max(all_values)
-    ax.plot([min_val-1, max_val+1], [min_val-1, max_val+1], "--", color="gray") # low the bounds
-    # set ticks
-    ax.set_xticks(np.arange(min_val, max_val, 1))
-    ax.set_yticks(np.arange(min_val, max_val, 1))
-    # set labels and title
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    if title:
-        ax.set_title(title)
-    ax.legend()
-
-    plt.tight_layout()
-    # save figure
-    if save_path:
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-
-    return None
-
+    

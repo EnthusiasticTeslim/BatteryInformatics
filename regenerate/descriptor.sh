@@ -27,7 +27,8 @@ run_model() {
         --seed $SEED \
         --iterations $ITERATIONS \
         --hyperparameter "hp_descriptor.yaml" \
-        --cv $CV
+        --cv $CV \
+        --skip_cv
 }
 
 # Main execution
