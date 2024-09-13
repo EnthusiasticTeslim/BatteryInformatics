@@ -73,6 +73,9 @@ options:
   --cv CV               Number of cross-validation folds
   --model MODEL         Model to train
   --seed SEED           Random seed
+  --morgan_fingerprint  Use Morgan Fingerprint (MFF) instead of RDKit descriptors
+  --nbits NBITS         Number of bits for MFF
+  --radius RADIUS       Radius for MFF
 ```
 
 The model and its predictions will be saved in `results/<MODEL>`. For example, to train a SVR model using RDKIT descriptor, you can use:

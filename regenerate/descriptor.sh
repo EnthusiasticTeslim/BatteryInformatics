@@ -28,7 +28,8 @@ run_model() {
         --iterations $ITERATIONS \
         --hyperparameter "hp_descriptor.yaml" \
         --cv $CV \
-        --skip_cv
+        --skip_cv \
+        --morgan_fingerprint # remove this line if you don't want to use Morgan fingerprint
 }
 
 # Main execution

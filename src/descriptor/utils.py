@@ -1,9 +1,11 @@
 import os, yaml
 
 import numpy as np
+import random
 import pandas as pd
 from tqdm import tqdm
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from rdkit.Chem import rdCoordGen, Descriptors
 
 import matplotlib.pyplot as plt
@@ -11,6 +13,27 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
 from skopt import BayesSearchCV
 from skopt.space import Real, Integer, Categorical
+
+def setup_environment(args):
+    """Setup the environment"""
+    np.random.seed(args.seed)
+    random.seed(args.seed)
+
+    # create save directory
+    if not args.morgan_fingerprint:
+        result_dir = f"{args.parent_directory}/{args.result_directory}/{args.model}/RDKit"
+    else:
+        result_dir = f"{args.parent_directory}/{args.result_directory}/{args.model}/MFF"
+        
+    if os.path.exists(result_dir):
+        if input(f"Directory {result_dir} exists. Overwrite? (y/n)") == 'y':
+            os.system(f"rm -r {result_dir}")
+        else:
+            return
+        os.makedirs(result_dir)
+    else:
+        os.makedirs(result_dir)
+    return result_dir
 
 def molecules_from_smiles(smiles):
     '''
@@ -58,6 +81,24 @@ def compute_rdkit_descriptors(molecules, drop_na=False):
     if drop_na:
         df = df.dropna(axis=1)
     
+    return df
+
+
+def compute_MFF_descriptors(molecules, nbits=128, radius=2, useChirality=True,):
+    """
+    Compute Morgan fingerprints for a list of molecules and return a DataFrame.
+    """
+    # Initialize dictionary to store results
+    results = {f"mfp{i}": [] for i in range(nbits)}
+    
+    # Iterate over molecules with a progress bar
+    for mol in tqdm(molecules, desc="Computing MFF descriptors"):
+        fp = AllChem.GetMorganFingerprintAsBitVect(mol=mol, radius=radius, useChirality=useChirality, nBits=nbits)
+        for i in range(nbits):
+            results[f"mfp{i}"].append(fp[i])
+        
+    # Convert results to a DataFrame
+    df = pd.DataFrame(results)
     return df
 
 def read_and_process_data(file_path, canonicalize=True, columns = ['smiles', 'redox_potential']):

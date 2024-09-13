@@ -12,20 +12,11 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, A
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*') 
 warnings.filterwarnings('ignore', category=UserWarning, append=True)
-from utils import molecules_from_smiles, compute_rdkit_descriptors, scale, hyperparameter_optimization, load_hyperparameter_space, evaluate_model
+from utils import setup_environment, molecules_from_smiles, compute_rdkit_descriptors, compute_MFF_descriptors, scale, hyperparameter_optimization, load_hyperparameter_space, evaluate_model
 
 def main(args):
 
-    # create save directory
-    result_dir = f"{args.parent_directory}/{args.result_directory}/{args.model}"
-    if os.path.exists(result_dir):
-        if input(f"Directory {result_dir} exists. Overwrite? (y/n)") == 'y':
-            os.system(f"rm -r {result_dir}")
-        else:
-            return
-        os.makedirs(result_dir)
-    else:
-        os.makedirs(result_dir)
+    result_dir = setup_environment(args)
     # read data
     tqdm.write('Data loaded')
     data_dir = f'{args.parent_directory}/{args.data_directory}/'
@@ -45,15 +36,22 @@ def main(args):
     test_molecules = molecules_from_smiles(test_data.smiles)
 
     # descriptors
-    train_rdkit_descriptors = compute_rdkit_descriptors(train_molecules)
-    test_rdkit_descriptors = compute_rdkit_descriptors(test_molecules)
+    if not args.morgan_fingerprint:
+        train_descriptors = compute_rdkit_descriptors(train_molecules)
+        test_descriptors = compute_rdkit_descriptors(test_molecules)
+    else:
+        train_descriptors = compute_MFF_descriptors(train_molecules, nbits=args.nbits, radius=args.radius, useChirality=True)
+        test_descriptors = compute_MFF_descriptors(test_molecules, nbits=args.nbits, radius=args.radius, useChirality=True)
+
 
     # target variable
     y_train, y_test = train_data.label, test_data.label
 
     # scale data
-    if args.scale:
-        X_train, X_test = scale(train_rdkit_descriptors, test_rdkit_descriptors)
+    if args.scale and not args.morgan_fingerprint:
+        X_train, X_test = scale(train_descriptors, test_descriptors)
+    else:
+        X_train, X_test = train_descriptors.values, test_descriptors.values
 
     # optimize hyperparameters
     tqdm.write(f'Optimizing hyperparameters for model {args.model}')
@@ -135,6 +133,9 @@ if __name__ == '__main__':
     parser.add_argument('--cv', type=int, default=5, help='Number of cross-validation folds')
     parser.add_argument('--model', type=str, default='RandomForestRegressor', help='Model to train')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
+    parser.add_argument('--morgan_fingerprint', action='store_true', help='Use Morgan Fingerprint (MFF) instead of RDKit descriptors')
+    parser.add_argument('--nbits', type=int, default=256, help='Number of bits for MFF')
+    parser.add_argument('--radius', type=int, default=2, help='Radius for MFF')
 
     args = parser.parse_args()
     main(args)
