@@ -172,7 +172,14 @@ def setup_environment(args):
     random.seed(args.seed)
     
     result_dir = f"{args.parent_directory}/{args.result_directory}/model{datetime.now().strftime('%Y%m%d')}"
-    os.makedirs(result_dir, exist_ok=True)
+    if os.path.exists(result_dir):
+        if input(f"Directory {result_dir} exists. Overwrite? (y/n)") == 'y':
+            os.system(f"rm -r {result_dir}")
+        else:
+            return
+        os.makedirs(result_dir)
+    else:
+        os.makedirs(result_dir)
     return result_dir
 
 def load_data(args):
