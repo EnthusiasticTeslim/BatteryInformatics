@@ -171,21 +171,34 @@ def setup_environment(args):
     np.random.seed(args.seed)
     random.seed(args.seed)
     
-    result_dir = f"{args.parent_directory}/{args.result_directory}/model{datetime.now().strftime('%Y%m%d')}"
-    if os.path.exists(result_dir):
-        if input(f"Directory {result_dir} exists. Overwrite? (y/n)") == 'y':
-            os.system(f"rm -r {result_dir}")
+    if args.docker:
+        result_dir = f"{args.parent_directory}/model{datetime.now().strftime('%Y%m%d')}"
+    else: 
+        result_dir = f"{args.parent_directory}/{args.result_directory}/model{datetime.now().strftime('%Y%m%d')}"
+    
+    if args.train: # if training, create a new directory else use the existing directory
+        if os.path.exists(result_dir):
+            if input(f"Directory {result_dir} exists. Overwrite? (y/n)") == 'y':
+                os.system(f"rm -r {result_dir}")
+            else:
+                return
+            os.makedirs(result_dir)
         else:
-            return
-        os.makedirs(result_dir)
-    else:
-        os.makedirs(result_dir)
+            os.makedirs(result_dir)
+    else: # raise error if the directory does not exist
+        if not os.path.exists(result_dir):
+            raise ValueError(f"Directory {result_dir} does not exist.")
     return result_dir
 
 def load_data(args):
     """Load the data"""
-    train_data = pd.read_csv(f'{args.parent_directory}/{args.data_directory}/{args.train_data}')
-    test_data = pd.read_csv(f'{args.parent_directory}/{args.data_directory}/{args.test_data}')
+    
+    if args.docker:
+        train_data = pd.read_csv(f'{args.parent_directory}/{args.train_data}')
+        test_data = pd.read_csv(f'{args.parent_directory}/{args.test_data}')
+    else:
+        train_data = pd.read_csv(f'{args.parent_directory}/{args.data_directory}/{args.train_data}')
+        test_data = pd.read_csv(f'{args.parent_directory}/{args.data_directory}/{args.test_data}')
     
     for df in [train_data, test_data]:
         if 'smiles' not in df.columns or 'label' not in df.columns:

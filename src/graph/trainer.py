@@ -42,7 +42,8 @@ def main(args):
                     val_loss, val_rmse = validate(val_loader, model, args)
                     is_best = val_rmse < best_rmse
                     best_rmse = min(val_rmse, best_rmse)
-                    tqdm.write(f"epoch: {epoch+1}, train loss: {train_loss:.3f}, train rmse: {train_rmse:.3f}, "
+                    if args.print_result:
+                        tqdm.write(f"epoch: {epoch+1}, train loss: {train_loss:.3f}, train rmse: {train_rmse:.3f}, "
                                f"val loss: {val_loss:.3f}, val rmse: {val_rmse:.3f}, best rmse: {best_rmse:.3f}, best model: {is_best}")
                     
                     if is_best:
@@ -99,7 +100,8 @@ def main(args):
                 val_loss, val_rmse = validate(val_loader, model, args)
                 is_best = val_rmse < best_rmse
                 best_rmse = min(val_rmse, best_rmse)
-                tqdm.write(f"epoch: {epoch+1}, train loss: {train_loss:.3f}, train rmse: {train_rmse:.3f}, "
+                if args.print_result:
+                    tqdm.write(f"epoch: {epoch+1}, train loss: {train_loss:.3f}, train rmse: {train_rmse:.3f}, "
                            f"val loss: {val_loss:.3f}, val rmse: {val_rmse:.3f}, best rmse: {best_rmse:.3f}, best model: {is_best}")
                 
                 if is_best:
@@ -153,6 +155,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=2020, type=int, help='seed number')
     parser.add_argument('--num_feat', default=6, type=int, help='number of additional features')
     parser.add_argument('--train', action='store_true', help='if train')
-    
+    parser.add_argument('--print_result', action='store_true', help='if print result')
+    parser.add_argument('--docker', action='store_true', help='if docker')
     args = parser.parse_args()
     main(args)
