@@ -8,9 +8,9 @@ PYTHON_SCRIPT="${MAIN_DIRECTORY}/src/descriptor/trainer.py"
 train_data="train_data_cleaned.csv"
 test_data="test_data_cleaned.csv"
 MODELS=("SVR") # ("GradientBoostingRegressor" "SVR" "RandomForestRegressor" "AdaBoostRegressor")
-SEED=104
-ITERATIONS=1
-CV=5
+SEED=42
+ITERATIONS=30
+CV=10
 
 # Function to run the Python script
 run_model() {
@@ -28,8 +28,8 @@ run_model() {
         --iterations $ITERATIONS \
         --hyperparameter "hp_descriptor.yaml" \
         --cv $CV \
-        --skip_cv \
-        --morgan_fingerprint # remove this line if you don't want to use Morgan fingerprint
+        --morgan_fingerprint --nbits 32 --radius 2
+# remove --morgan_fingerprint  if you don't want to use Morgan fingerprint
 }
 
 # Main execution
@@ -42,7 +42,11 @@ done
 echo "All models completed."
 
 # Model-specific configurations (for reference)
-# SVR: seed=104, iterations=20, cv=10
-# RandomForestRegressor: seed=42, iterations=30, cv=10
-# AdaBoostRegressor: seed=104, iterations=100, cv=10
-# GradientBoostingRegressor: seed=104, iterations=100, cv=10
+# 1. RDKit: 
+#   SVR: seed=104, iterations=30, cv=10
+#   RandomForestRegressor: seed=42, iterations=30, cv=10
+#   AdaBoostRegressor: seed=104, iterations=30, cv=10
+#   GradientBoostingRegressor: seed=104, iterations=100, cv=10
+
+# 2. Morgan fingerprint:
+#   SVR: seed=104, iterations=30, cv=10

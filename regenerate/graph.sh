@@ -6,8 +6,8 @@ RESULT_DIRECTORY="results/GNN"
 DATA_DIRECTORY="data"
 PYTHON_SCRIPT="$MAIN_DIRECTORY/src/graph/trainer.py"
 seed=42
-iterations=100
-cv=3
+iterations=1000
+cv=10
 train_data="train_data_cleaned.csv"
 test_data="test_data_cleaned.csv"
 
@@ -23,4 +23,4 @@ python "$PYTHON_SCRIPT" \
     --epoch $iterations \
     --cv $cv \
     --train \
-    --skip_cv \
+    #--skip_cv \
