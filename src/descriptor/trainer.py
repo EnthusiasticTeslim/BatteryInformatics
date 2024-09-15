@@ -2,6 +2,7 @@
 import warnings
 import pickle
 import pandas as pd
+import numpy as np
 import argparse, os, sys
 from tqdm import tqdm
 from sklearn.model_selection import KFold
@@ -18,13 +19,15 @@ def main(args):
 
     result_dir = setup_environment(args)
     # read data
-    tqdm.write('Data loaded')
-    data_dir = f'{args.parent_directory}/{args.data_directory}/'
-    train_data = pd.read_csv(f'{data_dir}{args.train_data}')
-    test_data = pd.read_csv(f'{data_dir}{args.test_data}')
-    # print % of data
-    tqdm.write(f'% Train data: {100*len(train_data)/(len(train_data)+len(test_data)):.2f}')
-    tqdm.write(f'% Test data: {100*len(test_data)/(len(train_data)+len(test_data)):.2f}')
+    if args.docker:
+        train_data = pd.read_csv(f'{args.parent_directory}/{args.train_data}')
+        test_data = pd.read_csv(f'{args.parent_directory}/{args.test_data}')
+    else:
+        train_data = pd.read_csv(f'{args.parent_directory}/{args.data_directory}/train_data_cleaned.csv')
+        test_data = pd.read_csv(f'{args.parent_directory}/{args.data_directory}/test_data_cleaned.csv')
+
+    tqdm.write(f"Data loaded: {np.ceil(100 * len(train_data) / (len(train_data) + len(test_data)))} % train set, "
+               f"{np.floor(100 * len(test_data) / (len(train_data) + len(test_data)))} % test set")
 
     # check if columns smiles and label are in the data
     if 'smiles' not in train_data.columns or 'label' not in train_data.columns or \
@@ -57,7 +60,10 @@ def main(args):
     tqdm.write(f'Optimizing hyperparameters for model {args.model}')
     model = eval(f"{args.model}()")
     
-    hyperparameter_file = f"{args.parent_directory}/{args.hyperparameter}"
+    if args.docker:
+        hyperparameter_file = f"{args.parent_directory}/{args.hyperparameter}"
+    else:
+        hyperparameter_file = f"{args.parent_directory}/regenerate/{args.hyperparameter}"
     param_space = load_hyperparameter_space(hyperparameter_file)[args.model]
 
     optimized_result = hyperparameter_optimization(model, param_space, X_train, y_train, cv=args.cv, n_iter=args.iterations, random_state=int(args.seed))
@@ -72,7 +78,8 @@ def main(args):
     if args.skip_cv:
         tqdm.write('Skipping cross-validation')
         fname = 'noCV'
-        model = SVR(**optimized_result.best_params_)
+        model = eval(f"{args.model}()")
+        model = model.set_params(**optimized_result.best_params_)
         model.fit(X_train, y_train)
         y_pred_train = model.predict(X_train)
         y_pred_test = model.predict(X_test)
@@ -92,7 +99,8 @@ def main(args):
         for cv_index, (train_indices, valid_indices) in enumerate(kf.split(range(len(train_data)))):
             fname = f"cvid{cv_index}"
             # create model with best hyperparameters
-            model = SVR(**optimized_result.best_params_)
+            model = eval(f"{args.model}()")
+            model = model.set_params(**optimized_result.best_params_)
             # split data
             X_train_cv = X_train[train_indices]
             y_train_cv = y_train[train_indices]
@@ -136,6 +144,7 @@ if __name__ == '__main__':
     parser.add_argument('--morgan_fingerprint', action='store_true', help='Use Morgan Fingerprint (MFF) instead of RDKit descriptors')
     parser.add_argument('--nbits', type=int, default=256, help='Number of bits for MFF')
     parser.add_argument('--radius', type=int, default=2, help='Radius for MFF')
+    parser.add_argument('--docker', action='store_true', help='Run in docker')
 
     args = parser.parse_args()
     main(args)

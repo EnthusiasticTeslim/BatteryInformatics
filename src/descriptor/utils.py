@@ -1,5 +1,4 @@
 import os, yaml
-
 import numpy as np
 import random
 import pandas as pd
@@ -8,7 +7,6 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import rdCoordGen, Descriptors
 
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
 from skopt import BayesSearchCV
@@ -19,12 +17,18 @@ def setup_environment(args):
     np.random.seed(args.seed)
     random.seed(args.seed)
 
-    # create save directory
-    if not args.morgan_fingerprint:
-        result_dir = f"{args.parent_directory}/{args.result_directory}/{args.model}/RDKit"
+    # set the result directory
+    if args.docker:
+       dir = f"{args.parent_directory}"
     else:
-        result_dir = f"{args.parent_directory}/{args.result_directory}/{args.model}/MFF"
+        dir = f"{args.parent_directory}/{args.result_directory}"
         
+    if not args.morgan_fingerprint:
+        result_dir = f"{dir}/{args.model}/RDKit"
+    else:
+        result_dir = f"{dir}/{args.model}/MFF"
+    
+    # create directory
     if os.path.exists(result_dir):
         if input(f"Directory {result_dir} exists. Overwrite? (y/n)") == 'y':
             os.system(f"rm -r {result_dir}")
@@ -183,20 +187,31 @@ def load_hyperparameter_space(yaml_file):
 
 def evaluate_model(result_dir, results, identifier='noCV'):
 
+    save = []
     for dataset, y_true, y_pred in results:
         rmse = root_mean_squared_error(y_true, y_pred)
         mae = mean_absolute_error(y_true, y_pred)
         r2 = r2_score(y_true, y_pred)
-        tqdm.write(f'{dataset} set')
-        tqdm.write(f"id: {identifier}, RMSE: {rmse:.2f}, MAE: {mae:.2f}, R2: {r2:.2f}")
+        save.append((dataset, y_true, y_pred, rmse, mae, r2))
+    
+    # should be form of [('Train', (rmse, r2), ('Test', (rmse, r2)), ('Val', (rmse, r2))]
+    if len(save) == 2:
+        tqdm.write(f"{identifier} ---> Train RMSE: {save[0][3]:.2f}, Test RMSE: {save[1][3]:.2f}, Train R2: {save[0][5]:.2f}, Test R2: {save[1][5]:.2f}")
+    else:
+        tqdm.write(f"{identifier} ---> Train RMSE: {save[0][3]:.2f}, Val RMSE: {save[1][3]:.2f}, Test RMSE: {save[2][3]:.2f}, Train R2: {save[0][5]:.2f}, Val R2: {save[1][5]:.2f}, Test R2: {save[2][5]:.2f}")
 
     # metrics to file
+    save_metrics=[]
     with open(f"{result_dir}/performance_metrics_{identifier}.txt", 'w') as f:
         for dataset, y_true, y_pred in results:
             rmse = root_mean_squared_error(y_true, y_pred) 
             mae = mean_absolute_error(y_true, y_pred)
             r2 = r2_score(y_true, y_pred)
-            f.write(f'{dataset} set\n')
-            f.write(f"id: {identifier}, RMSE: {rmse:.2f}, MAE: {mae:.2f}, R2: {r2:.2f}\n")
+            save_metrics.append((dataset, rmse, mae, r2))
+        if len(save) == 2:
+            f.write(f"{identifier} ---> Train RMSE: {save[0][3]:.2f}, Test RMSE: {save[1][3]:.2f}, Train R2: {save[0][5]:.2f}, Test R2: {save[1][5]:.2f}")
+        else:
+            f.write(f"{identifier} ---> Train RMSE: {save[0][3]:.2f}, Val RMSE: {save[1][3]:.2f}, Test RMSE: {save[2][3]:.2f}, Train R2: {save[0][5]:.2f}, Val R2: {save[1][5]:.2f}, Test R2: {save[2][5]:.2f}")
+
     
     
