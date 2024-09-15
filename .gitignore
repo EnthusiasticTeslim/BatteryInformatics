@@ -2,7 +2,7 @@
 dump*
 # README.md 
 *tfevents*
-docker/*
+# docker/*
 *__pycache__*
 *.DS_Store*
 *.idea*

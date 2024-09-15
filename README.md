@@ -47,6 +47,9 @@ source binfo/bin/activate
 <!-- Training Models-->
 <h2 id="Training">Training Models</h2>
 
+> [!IMPORTANT]  
+> All scripts for training models are available in Docker mode in folder `docker`.
+
 <h3 id="Descriptor"> Traditional Model</h3>
 
 ```
@@ -151,6 +154,7 @@ python -m src/graph/trainer.py --parent_directory YOUR_MAIN_FOLDER --result_dire
 <h3 id="LLM"> Transformer</h3>
 
 under construction
+
 
 <!-- Status -->
 <h2 id="Status">Status</h2>
