@@ -14,7 +14,7 @@ To build the Docker image for this project, navigate to the project's parent dir
 docker build -f docker/descriptor/Dockerfile -t descriptor .
 ```
 
-This command builds a Docker image named `descriptor` or `graph` using the Dockerfile located at `docker/descriptor/Dockerfile` and `docker/graph/Dockerfile`, respectively.
+This command builds a Docker image named `descriptor` or `graph` using the Dockerfile located at `docker/descriptor/Dockerfile` and `docker/graph/Dockerfile`, respectively. The images are available on DockerHub at [https://hub.docker.com/search?q=teslim404](https://hub.docker.com/search?q=teslim404)
 
 ## Running the Project
 
