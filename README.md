@@ -127,6 +127,7 @@ options:
   --seed SEED           seed number
   --num_feat NUM_FEAT   number of additional features
   --train               if train
+  --print_result        if print result
 ```
 
 To train the GNN model, 
