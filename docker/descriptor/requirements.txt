@@ -1,0 +1,7 @@
+numpy==2.0.2
+pandas
+PyYAML==6.0.2
+rdkit==2024.3.5
+scikit-learn==1.5.2
+scikit-optimize==0.10.2
+tqdm==4.66.5
